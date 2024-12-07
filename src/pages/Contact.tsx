@@ -2,6 +2,27 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+};
+
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const firestore = getFirestore(app);
 
 const presetMessages = {
   "ai-analysis":
@@ -20,6 +41,8 @@ export function Contact() {
     email: "",
     message: "",
   });
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const preset = searchParams.get("preset");
@@ -31,10 +54,28 @@ export function Contact() {
     }
   }, [searchParams]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formState);
+    setSuccessMessage("");
+    setErrorMessage("");
+
+    try {
+      await addDoc(collection(firestore, "contactFormSubmissions"), {
+        name: formState.name,
+        email: formState.email,
+        message: formState.message,
+        timestamp: serverTimestamp(),
+      });
+      setSuccessMessage(
+        "Thank you for reaching out! We will get back to you soon."
+      );
+      setFormState({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error("Error saving contact form data to Firebase:", error);
+      setErrorMessage(
+        "An error occurred while submitting the form. Please try again later."
+      );
+    }
   };
 
   return (
@@ -110,6 +151,10 @@ export function Contact() {
               <Send className="w-6 h-6" />
             </button>
           </form>
+          {successMessage && (
+            <p className="text-green-600 mt-4">{successMessage}</p>
+          )}
+          {errorMessage && <p className="text-red-600 mt-4">{errorMessage}</p>}
         </motion.div>
       </div>
     </div>
