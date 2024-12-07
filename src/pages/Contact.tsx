@@ -9,6 +9,7 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -43,6 +44,7 @@ export function Contact() {
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const preset = searchParams.get("preset");
@@ -66,10 +68,16 @@ export function Contact() {
         message: formState.message,
         timestamp: serverTimestamp(),
       });
+
       setSuccessMessage(
-        "Thank you for reaching out! We will get back to you soon."
+        "Thank you for reaching out! We appreciate your interest and will get back to you soon."
       );
       setFormState({ name: "", email: "", message: "" });
+
+      // Redirect to the home page after 3 seconds
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
     } catch (error) {
       console.error("Error saving contact form data to Firebase:", error);
       setErrorMessage(
@@ -152,9 +160,15 @@ export function Contact() {
             </button>
           </form>
           {successMessage && (
-            <p className="text-green-600 mt-4">{successMessage}</p>
+            <p className="text-green-600 mt-4 text-center text-lg font-medium">
+              {successMessage}
+            </p>
           )}
-          {errorMessage && <p className="text-red-600 mt-4">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="text-red-600 mt-4 text-center text-lg font-medium">
+              {errorMessage}
+            </p>
+          )}
         </motion.div>
       </div>
     </div>
