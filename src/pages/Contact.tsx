@@ -69,10 +69,11 @@ export function Contact() {
         timestamp: serverTimestamp(),
       });
 
+      // Clear the form and show success message
+      setFormState({ name: "", email: "", message: "" });
       setSuccessMessage(
         "Thank you for reaching out! We appreciate your interest and will get back to you soon."
       );
-      setFormState({ name: "", email: "", message: "" });
 
       // Redirect to the home page after 3 seconds
       setTimeout(() => {
@@ -95,79 +96,89 @@ export function Contact() {
           transition={{ duration: 0.8 }}
           className="bg-white rounded-2xl shadow-xl p-8"
         >
-          <h2 className="text-4xl font-bold text-center mb-8">Get in Touch</h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-xl font-medium text-gray-700 mb-2"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={formState.name}
-                onChange={(e) =>
-                  setFormState({ ...formState, name: e.target.value })
-                }
-                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
+          {successMessage ? (
+            // Display success message
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-green-600 mb-4">
+                Thank You!
+              </h2>
+              <p className="text-lg text-gray-700">{successMessage}</p>
             </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-xl font-medium text-gray-700 mb-2"
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={formState.email}
-                onChange={(e) =>
-                  setFormState({ ...formState, email: e.target.value })
-                }
-                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="message"
-                className="block text-xl font-medium text-gray-700 mb-2"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                value={formState.message}
-                onChange={(e) =>
-                  setFormState({ ...formState, message: e.target.value })
-                }
-                rows={4}
-                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white text-xl font-semibold px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-            >
-              <span>Send Message</span>
-              <Send className="w-6 h-6" />
-            </button>
-          </form>
-          {successMessage && (
-            <p className="text-green-600 mt-4 text-center text-lg font-medium">
-              {successMessage}
-            </p>
-          )}
-          {errorMessage && (
-            <p className="text-red-600 mt-4 text-center text-lg font-medium">
-              {errorMessage}
-            </p>
+          ) : (
+            // Display the form
+            <>
+              <h2 className="text-4xl font-bold text-center mb-8">
+                Get in Touch
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-xl font-medium text-gray-700 mb-2"
+                  >
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={formState.name}
+                    onChange={(e) =>
+                      setFormState({ ...formState, name: e.target.value })
+                    }
+                    className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-xl font-medium text-gray-700 mb-2"
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={formState.email}
+                    onChange={(e) =>
+                      setFormState({ ...formState, email: e.target.value })
+                    }
+                    className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="block text-xl font-medium text-gray-700 mb-2"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    value={formState.message}
+                    onChange={(e) =>
+                      setFormState({ ...formState, message: e.target.value })
+                    }
+                    rows={4}
+                    className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white text-xl font-semibold px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <span>Send Message</span>
+                  <Send className="w-6 h-6" />
+                </button>
+              </form>
+              {errorMessage && (
+                <p className="text-red-600 mt-4 text-center text-lg font-medium">
+                  {errorMessage}
+                </p>
+              )}
+            </>
           )}
         </motion.div>
       </div>
